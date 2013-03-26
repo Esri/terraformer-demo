@@ -21,7 +21,12 @@
     <style>
       #map {
         height: 500px;
+        width: 65%;
         float: right;
+      }
+      #inputs {
+        width: 35%;
+        float: left;
       }
       textarea {
         height: 380px;
@@ -31,10 +36,8 @@
     </style>
   </head>
   <body>
-    <div id="container">
-      <div class="row">
-        <div id="map" class="span7"></div>
-        <div class="span5">
+        <div id="map"></div>
+        <div id="inputs">
           <ul id="tabs" class="nav nav-pills">
             <li class="active">
               <a href="#wkt">WKT</a>
@@ -55,13 +58,12 @@
               <textarea placeholder="ArcGIS" data-type="arcgis"></textarea>
             </div>
             <br>
-            <button id="submit" class="btn">Show On Map</button>
-            <button id="bounding" class="btn">Bounding Box</button>
-            <button id="convex" class="btn">Convex Hull</button>
+            <button id="submit" class="btn btn-small">Show On Map</button>
+            <button id="bounding" class="btn btn-small">Bounding Box</button>
+            <button id="convex" class="btn btn-small">Convex Hull</button>
+            <button id="clear" class="btn btn-small">Clear</button>
           </div>
-        </div>
       </div>
-    </div>
       <script>
       $('#tabs a').click(function (e) {
         e.preventDefault();

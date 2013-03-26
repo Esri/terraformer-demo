@@ -126,4 +126,7 @@ require([
   query("#submit").on("click", showOnMap);
   query("#bounding").on("click", showBBoxOnMap);
   query("#convex").on("click", showConvexOnMap);
+  query("#clear").on("click", function(){
+    map.graphics.clear();
+  });
 });
