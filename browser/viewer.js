@@ -1,39 +1,129 @@
 require([
   "dojo/query",
+  "terraformer/terraformer",
+  "terraformer/wkt",
   "terraformer/arcgis",
   "esri/map"
-], function ($, TerraformerArcGIS) {
+], function (query,Terraformer, TerraformerWKT, TerraformerArcGIS) {
   var map = new esri.Map("map", {
     basemap: "topo",
     center: [-122, 45],
     zoom: 6
   });
 
-  function showOnMap(){
-    // parse the input as json
-    var input = JSON.parse($("#input").attr("value")[0]);
+  var hullOutline = new esri.symbol.SimpleLineSymbol("dash",new dojo.Color([47,140,212]), 2);
+  var boundsOutline = new esri.symbol.SimpleLineSymbol("dash",new dojo.Color([212,125,47]), 2);
+  var hullSymbol = new esri.symbol.SimpleFillSymbol("solid", hullOutline, new dojo.Color([195,229,255,0.5]));
+  var boundsSymbol = new esri.symbol.SimpleFillSymbol("solid", boundsOutline, new dojo.Color([255,215,180,0.5]));
 
-    // convert teh geojson object to a arcgis json representation
-    var arcgis = TerraformerArcGIS.convert(input);
+  var currentPrimitive;
+  var shape;
+  function showArcGIS(arcgis){
+    currentPrimitive = TerraformerArcGIS.parse(arcgis);
+    addGraphic(arcgis);
+  }
 
-    var gfx;
+  function showWKT(wkt){
+    currentPrimitive = TerraformerWKT.parse(wkt);
+    var arcgis = TerraformerArcGIS.convert(currentPrimitive);
+    addGraphic(arcgis);
+  }
+
+  function showGeoJSON(geojson){
+    // convert the geojson object to a arcgis json representation
+    currentPrimitive = new Terraformer.Primitive(geojson);
+    var arcgis = TerraformerArcGIS.convert(currentPrimitive);
+    addGraphic(arcgis);
+  }
+
+  function addGraphic(arcgis){
     // if arcgis.geometry is set we have a graphic json
     // else we can create our own json and set the symbol on it.
     if(arcgis.geometry){
-      gfx = new esri.Graphic(arcgis).setSymbol(new esri.symbol.SimpleFillSymbol());
+      shape = new esri.Graphic(arcgis).setSymbol(new esri.symbol.SimpleFillSymbol());
     } else {
-      gfx = new esri.Graphic({
+      shape = new esri.Graphic({
         geometry: arcgis
       }).setSymbol(new esri.symbol.SimpleFillSymbol());
     }
 
     // add the graphic to the map
+    map.graphics.add(shape);
+
+    // center the map on the graphic
+    map.setExtent(shape.geometry.getExtent());
+  }
+
+  function showOnMap(){
+    map.graphics.clear();
+
+    // parse the input as json
+    var input = query(".tab-pane.active textarea").attr("value")[0];
+    var type = query(".tab-pane.active textarea").attr("data-type")[0];
+
+
+    switch(type){
+    case "wkt":
+      showWKT(input);
+      break;
+    case "geojson":
+      showGeoJSON(JSON.parse(input));
+      break;
+    case "arcgis":
+      showArcGIS(JSON.parse(input));
+      break;
+    }
+  }
+
+  function showConvexOnMap(){
+
+    // create a convex hull
+    var convex = new Terraformer.Polygon([ currentPrimitive.convexHull() ]);
+
+    // convert the geojson object to a arcgis json representation
+    var arcgis = TerraformerArcGIS.convert(convex);
+
+    // create a new geometry object from json
+    var geometry = esri.geometry.fromJson(arcgis);
+
+    // make a new graphic to put on the map
+    var gfx = new esri.Graphic(geometry, hullSymbol);
+
+    // add the graphic to the map
     map.graphics.add(gfx);
+
+    shape.getDojoShape().moveToFront();
 
     // center the map on the graphic
     map.setExtent(gfx.geometry.getExtent());
   }
 
-  $("#input").on("change", showOnMap);
-  $("#submit").on("click", showOnMap);
+  function showBBoxOnMap(){
+
+    var box = currentPrimitive.bbox;
+
+    // create a bbox hull
+    var bbox = new Terraformer.Polygon( [ [ [ box[0], box[1] ], [ box[0], box[3] ], [ box[2], box[3] ], [ box[2], box[1] ], [ box[0], box[1] ]  ] ] );
+
+    // convert the geojson object to a arcgis json representation
+    var arcgis = TerraformerArcGIS.convert(bbox);
+
+    // create a new geometry object from json
+    var geometry = esri.geometry.fromJson(arcgis);
+
+    // make a new graphic to put on the map
+    var gfx = new esri.Graphic(geometry, boundsSymbol);
+
+    // add the graphic to the map
+    map.graphics.add(gfx);
+
+    shape.getDojoShape().moveToFront();
+
+    // center the map on the graphic
+    map.setExtent(gfx.geometry.getExtent());
+  }
+
+  query("#submit").on("click", showOnMap);
+  query("#bounding").on("click", showBBoxOnMap);
+  query("#convex").on("click", showConvexOnMap);
 });

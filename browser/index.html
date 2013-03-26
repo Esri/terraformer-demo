@@ -8,37 +8,65 @@
         async: true,
         packages: [{
           name: "terraformer",
-          location: "https://raw.github.com/esri/Terraformer/master/dist/browser/"
+          location: "https://raw.github.com/Esri/Terraformer/master/dist/browser/"
         }]
       }
     </script>
     <link rel="stylesheet" href="http://serverapi.arcgisonline.com/jsapi/arcgis/3.3/js/esri/css/esri.css" />
     <script src="http://serverapi.arcgisonline.com/jsapi/arcgis/3.3/" type="text/javascript"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
+    <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
     <script src="viewer.js"></script>
     <style>
       #map {
-        padding: 6px;
-        height: 700px;
-        width: 600px;
+        height: 500px;
         float: right;
       }
-      #input {
-        padding: 6px;
-        width: 400px;
-        height: 200px;
+      textarea {
+        height: 380px;
+        box-sizing: border-box;
+        width: 100%;
       }
     </style>
   </head>
   <body>
     <div id="container">
-      <div id="map"></div>
-      <div>
-        <textarea id="input" placeholder="Data"></textarea>
-        <br>
-        <button id="submit">Show On Map</button>
-        <button id="bounding">Bounding Box</button>
-        <button id="convex">Convex Hull</button>
+      <div class="row">
+        <div id="map" class="span7"></div>
+        <div class="span5">
+          <ul id="tabs" class="nav nav-pills">
+            <li class="active">
+              <a href="#wkt">WKT</a>
+            </li>
+            <li><a href="#geojson">GeoJSON</a></li>
+            <li><a href="#arcgis">ArcGIS</a></li>
+          </ul>
+          <div class="tab-content">
+            <div id="wkt" class="tab-pane active">
+              <textarea placeholder="WKT" data-type="wkt"></textarea>
+            </div>
+
+            <div id="geojson" class="tab-pane" >
+              <textarea placeholder="GeoJSON" data-type="geojson"></textarea>
+            </div>
+
+            <div id="arcgis" class="tab-pane">
+              <textarea placeholder="ArcGIS" data-type="arcgis"></textarea>
+            </div>
+            <br>
+            <button id="submit" class="btn">Show On Map</button>
+            <button id="bounding" class="btn">Bounding Box</button>
+            <button id="convex" class="btn">Convex Hull</button>
+          </div>
+        </div>
       </div>
     </div>
+      <script>
+      $('#tabs a').click(function (e) {
+        e.preventDefault();
+        $(this).tab(  'show');
+      });
+    </script>
   </body>
 </html>
