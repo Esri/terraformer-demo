@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset=utf-8 />
+    <title>Omni-viewer</title>
+    <script>
+      dojoConfig= {
+        async: true,
+        packages: [{
+          name: "terraformer",
+          location: "https://raw.github.com/esri/Terraformer/master/dist/browser/"
+        }]
+      }
+    </script>
+    <link rel="stylesheet" href="http://serverapi.arcgisonline.com/jsapi/arcgis/3.3/js/esri/css/esri.css" />
+    <script src="http://serverapi.arcgisonline.com/jsapi/arcgis/3.3/" type="text/javascript"></script>
+    <script src="viewer.js"></script>
+    <style>
+      #map {
+        padding: 6px;
+        height: 700px;
+        width: 600px;
+        float: right;
+      }
+      #input {
+        padding: 6px;
+        width: 400px;
+        height: 200px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <div id="map"></div>
+      <div>
+        <textarea id="input" placeholder="Data"></textarea>
+        <br>
+        <button id="submit">Show On Map</button>
+        <button id="bounding">Bounding Box</button>
+        <button id="convex">Convex Hull</button>
+      </div>
+    </div>
+  </body>
+</html>
