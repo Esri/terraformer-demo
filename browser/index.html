@@ -1,44 +1,57 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset=utf-8 />
-    <title>Omni-viewer</title>
-    <script>
-      dojoConfig= {
-        async: true,
-        packages: [{
-          name: "terraformer",
-          location: "https://raw.github.com/esri/Terraformer/master/dist/browser/"
-        }]
-      }
-    </script>
-    <link rel="stylesheet" href="http://serverapi.arcgisonline.com/jsapi/arcgis/3.3/js/esri/css/esri.css" />
-    <script src="http://serverapi.arcgisonline.com/jsapi/arcgis/3.3/" type="text/javascript"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
-    <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
-    <script src="viewer.js"></script>
-    <style>
-      #map {
-        height: 500px;
-        width: 65%;
-        float: right;
-      }
-      #inputs {
-        width: 35%;
-        float: left;
-      }
-      textarea {
-        height: 380px;
-        box-sizing: border-box;
-        width: 100%;
-      }
-    </style>
-  </head>
-  <body>
-        <div id="map"></div>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Terraformer Demos</title>
+  <link rel="stylesheet" href="https://js.arcgis.com/3.19/esri/css/esri.css">
+
+  <script src="https://unpkg.com/terraformer@1.0.7"></script>
+  <script src="https://unpkg.com/terraformer-arcgis-parser@1.0.5"></script>
+  <script src="https://unpkg.com/terraformer-wkt-parser@1.1.2"></script>
+  <script src="https://js.arcgis.com/3.19/"></script>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+  <script src="viewer.js"></script>
+  <style>
+  #map {
+    height: 500px;
+    width: 100%;
+    float: right;
+    border: 1px solid #ddd;
+  }
+  #inputs {
+    width: 100%;
+    float: left;
+  }
+  textarea.form-control {
+    height: 380px;
+    box-sizing: border-box;
+    width: 100%;
+  }
+  .tab-content{
+    border: 1px solid #ddd;
+    padding: 1rem;
+    border-top: 0;
+  }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="page-header">
+          <h1>Terraformer Demos <small>(Browser demos)</small></h1>
+        </div>
+      </div>
+
+      <div class="col-md-6">
         <div id="inputs">
-          <ul id="tabs" class="nav nav-pills">
+          <ul id="tabs" class="nav nav nav-tabs">
             <li class="active">
               <a href="#wkt">WKT</a>
             </li>
@@ -47,28 +60,36 @@
           </ul>
           <div class="tab-content">
             <div id="wkt" class="tab-pane active">
-              <textarea placeholder="WKT" data-type="wkt"></textarea>
+              <textarea class="form-control" placeholder="WKT" data-type="wkt"></textarea>
             </div>
 
             <div id="geojson" class="tab-pane" >
-              <textarea placeholder="GeoJSON" data-type="geojson"></textarea>
+              <textarea class="form-control" placeholder="GeoJSON" data-type="geojson"></textarea>
             </div>
 
             <div id="arcgis" class="tab-pane">
-              <textarea placeholder="ArcGIS" data-type="arcgis"></textarea>
+              <textarea class="form-control" placeholder="ArcGIS" data-type="arcgis"></textarea>
             </div>
             <br>
-            <button id="submit" class="btn btn-small">Show On Map</button>
-            <button id="bounding" class="btn btn-small">Bounding Box</button>
-            <button id="convex" class="btn btn-small">Convex Hull</button>
-            <button id="clear" class="btn btn-small">Clear</button>
+            <button id="submit" class="btn btn-primary btn-small">Show On Map</button>
+            <button id="bounding" class="btn btn-success btn-small">Bounding Box</button>
+            <button id="convex" class="btn btn-warning btn-small">Convex Hull</button>
+            <button id="clear" class="btn btn-default btn-small">Clear</button>
           </div>
+        </div>
       </div>
-      <script>
-      $('#tabs a').click(function (e) {
-        e.preventDefault();
-        $(this).tab(  'show');
-      });
-    </script>
-  </body>
+      <div class="col-md-6">
+        <div id="map"></div>
+      </div>
+    </div>
+  </div>
+
+  <a href="https://github.com/Esri/terraformer-demo"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/652c5b9acfaddf3a9c326fa6bde407b87f7be0f4/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6f72616e67655f6666373630302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png"></a>
+  <script>
+  $('#tabs a').click(function (e) {
+    e.preventDefault();
+    $(this).tab('show');
+  });
+  </script>
+</body>
 </html>
